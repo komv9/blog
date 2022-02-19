@@ -31,7 +31,12 @@
                             @endforeach
                         </ul>
                         <div class="card-footer">
-                            <span class="text-info"> Ads goes here</span>
+                            @if(isset($advertise))
+                            <a href="{{$advertise->ad_url}}">
+                            <span class="text-info">{{$advertise->text}}</span>
+                            <img src="{{asset($advertise->image)}}" width="100%" height="50px">
+                            </a>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -39,10 +44,12 @@
 
 
             <!--post starts-->
-            @foreach($posts as $post)
+            
             <div class="container mt-5">
             <div class="row main-section">
+
                 <div class="col-sm-12 col-md-9 col-lg-9">
+                    @foreach($posts as $post)
                     <div class="card rounded-0 shadow-sm" >
                         <div class="card-header">
                             <span>By</span>

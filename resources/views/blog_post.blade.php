@@ -50,26 +50,51 @@
                             @if(isset($loginID))
                             <a href="{{url('/edit_post/'.$post->id)}}"  class="btn btn-primary">Edit Post</a>
                             <a href="{{url('/delete_post/'.$post->id)}}"  class="btn btn-primary">Delete Post</a>
+                            <a href="{{url('/contact/'.$post->id)}}"  class="btn btn-primary">Contact</a>
                             @endif
 
                         </div>
                         <div class="card-footer">
                             <div class="row">
                                 <div class="col col-sm-10 col-md-10">
+                                    <form method="POST" action="{{url('/comment/'.$post->id)}}">
+                                        @csrf
                                     <div class="form-group">
                                         <input type="text" name="comment" class="form-control rounded-0" value="Enter comment...">
                                     </div>
                                 </div>
                                 <div class="col col-sm-2 col-md-2">
-                                    <button class="btn btn-warning rounded-0">Submit</button>
+                                    <button class="btn btn-warning rounded-0" type="submit">Submit</button>
                                 </div>
+                                </form>
                             </div>
                             <div class="comment-section">
-                                <span class="text-success bg-faded">Nice Aritcle...</span>
-                                <span class="text-success">Wow...Nice!</span>
-                                <span class="text-success">Nice one...Great thanks...</span>
+                                @if($comments->count())
+                                @foreach($comments as $comment)
+                                <span class="text-success bg-faded">{{$comment->comment}}</span>
+                                @endforeach
+                                @endif
                             </div>
                         </div>
+                        @if($contacts->count())
+                        <h2>Suggestions</h2>
+                        <table>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Suggestion</th>
+                            </tr>
+                            @foreach($contacts as $contact)
+                            <tr>
+                                <td>{{$contact->name}}</td>
+                                <td>{{$contact->email}}</td>
+                                <td>{{$contact->phone}}</td>
+                                <td>{{$contact->suggestion}}</td>
+                            </tr>
+                            @endforeach
+                        </table>
+                        @endif
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-3 col-lg-3">

@@ -44,3 +44,13 @@ Route::get('/blog_post/{id}', [App\Http\Controllers\HomeController::class, 'view
 Route::get('/author_posts/{user_id}', [App\Http\Controllers\HomeController::class, 'author_posts']);
 
 //search feature
+//contact feature
+Route::get('/contact/{id}', [App\Http\Controllers\HomeController::class, 'contact']);
+Route::post('/contact_upload/{id}', [App\Http\Controllers\HomeController::class, 'contact_upload']);
+
+//advertisement feature
+Route::get('/advertise', [App\Http\Controllers\HomeController::class, 'advertise']);
+Route::post('/ad_store', [App\Http\Controllers\HomeController::class, 'ad_store']);
+
+//comment
+Route::post('/comment/{id}', [App\Http\Controllers\HomeController::class, 'comment']);

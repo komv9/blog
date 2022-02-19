@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Post;
+use App\Models\Contact;
+use App\Models\Advertise;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Facades\DB;
+
 
 class HomeController extends Controller
 {
@@ -28,7 +32,8 @@ class HomeController extends Controller
         $id = auth()->user()->id;
         $posts = \App\Models\Post::with('user')->paginate(3);
         $categories = \App\Models\Category::get();
-        return view('home', compact('posts','categories'));
+        $advertise = \App\Models\Advertise::inRandomOrder()->first();
+        return view('home', compact('posts','categories','advertise'));
     }
 
     public function add() {
@@ -100,9 +105,12 @@ class HomeController extends Controller
     }
 
     public function view_blog($id) {
+
+        $comments = \App\Models\Comment::where('post_id',$id)->get();
+        $contacts = \App\Models\Contact::where('post_id',$id)->get();
         $loginID = auth()->user()->id;
         $post = \App\Models\Post::with('user')->find($id);
-        return view('blog_post', compact('post','loginID'));
+        return view('blog_post', compact('post','loginID','contacts','comments'));
     }
 
     public function author_posts($user_id) {
@@ -110,6 +118,62 @@ class HomeController extends Controller
         return view('author_posts', compact('posts'));
     }
 
+    public function contact($id) {
+        $post = \App\Models\Post::with('user')->find($id);
+        //$post_id = $post->id;
+        //$user_name = $post->user->name;
+        return view('contact',compact('post')); 
+    }
+
+    public function contact_upload($id) {
+        $validatedData = request()->validate([
+        'name' => 'required',
+        'email' => 'required',
+        'phone' => 'required',
+        'suggestion' => 'required',
+        ]);
+        $contact = new Contact;
+        $contact->name = request()->name;
+        $contact->email= request()->email;
+        $contact->phone = request()->phone;
+        $contact->suggestion = request()->suggestion;
+        $contact->post_id = $id;
+        $contact->save();
+        return redirect()->to("blog_post/$id");
+    }
+
+    public function advertise() {
+        return view('advertise');
+    }
+
+    public function ad_store() {
+        $validatedData = request()->validate([
+        'image' => 'required',
+        'text' => 'required',
+        'url' => 'required',
+        ]);
+        $ad = new Advertise;
+        $ad->text = request()->text;
+        $ad->ad_url = request()->url;
+        if(request()->hasFile('image')) {
+            $file = time().'.'.request()->image->extension();
+           $ad->image = 'storage/assets/'.$file;
+           request()->image->move(storage_path('app/public/assets'), $file);
+         }
+        $ad->save();
+        return redirect()->to("home");
+    }
     
+    public function comment($id) {
+        $validatedData = request()->validate([
+        'comment' => 'required',
+        ]);
+        $comment = new Comment;
+        $comment->comment = request()->comment;
+        $comment->post_id = $id;
+        $comment->save();
+        return redirect()->to("blog_post/$id");
+
+    }
 
 }
